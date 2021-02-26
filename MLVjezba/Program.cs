@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.Transforms.TimeSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace MLVjezba
     {
         static void Main(string[] args)
         {
-            int[] amounts = new int[] { 3000, 200, 150, 200, 300, 250, 300,22, 2250, 400, 250, 400, 233, 0, 3, 5 };
+            int[] amounts = new int[] { 3000, 200, 150, 200, 300, 250, 300,220, 300, 200, 250, 900, 233, 0, 3, 5 };
             List<Withdrawl> withdrawls = amounts.Select(amount => new Withdrawl { Amount = amount }).ToList();
 
             var machineLearningContext = new MLContext();
@@ -18,7 +19,8 @@ namespace MLVjezba
             var estimator = machineLearningContext.Transforms.DetectIidSpike(
                    outputColumnName: nameof(Prediction.Output),
                    inputColumnName: nameof(Withdrawl.Amount),
-                   confidence: 80,
+                   confidence: 99,
+                   side: AnomalySide.Positive,
                    pvalueHistoryLength: amounts.Length / 2);
 
             IDataView amountsData = machineLearningContext.Data.LoadFromEnumerable(withdrawls);
